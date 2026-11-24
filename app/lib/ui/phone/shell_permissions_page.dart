@@ -229,7 +229,7 @@ class _ShellPermissionsPageState extends ConsumerState<ShellPermissionsPage> {
             children: [
               SettingsSwitchTile(
                 title: '聊天页显示胶囊',
-                subtitle: '关掉后输入框上方不再显示终端/权限胶囊，界面更干净',
+                subtitle: '关掉后输入框上方不再显示终端胶囊，界面更干净',
                 value: _showChatPills,
                 onChanged: _setShowChatPills,
               ),

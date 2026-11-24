@@ -33,6 +33,7 @@ import '../../state/attachments.dart';
 import '../../state/balance_state.dart';
 import '../../state/chat_error_text.dart';
 import '../../state/chat_pills_state.dart';
+import '../../state/session_pill_state.dart';
 import '../../state/chat_state.dart';
 import '../../state/commands_state.dart';
 import '../../state/compose_inbox.dart';
@@ -50,7 +51,6 @@ import '../../state/media_generation.dart';
 import '../../state/mention_state.dart';
 import '../../state/models_state.dart';
 import '../../state/new_chat_modes.dart';
-import '../../state/phone_state.dart' show phoneProvider;
 import '../../state/session_search.dart' show folderLabel;
 import '../../state/safe_mode_state.dart';
 import '../../state/session_modes.dart';
@@ -370,6 +370,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _scheduleInteraction();
     ref.listenManual(currentSessionProvider, (_, _) => _scheduleInteraction());
     loadChatPillsVisible(ref);
+    loadSessionPillVisible(ref);
     _voice = VoiceInputController(
       input: _input,
       bridge: ref.read(voiceBridgeProvider),
@@ -2352,6 +2353,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   /// than 工作区内修改 (unless [risk] is false: they are beside the activity
   /// strip), then the generation mode's capsule; nothing otherwise.
   Widget? _composerPills(String? sessionId, {required bool autoApprove, GenerateParams? generate, bool risk = true}) {
+    // 权限页关了「显示会话权限胶囊」：这里一个都不出（只管会话权限，不管终端胶囊）。
+    if (!ref.watch(sessionPillVisibleProvider)) return null;
     final capsule = generate == null
         ? null
         : GenerateCapsule(params: generate, onTap: () => _openGenerateSheet(generate), onExit: _exitGenerate);
@@ -2398,6 +2401,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   }
 
   Widget? _stripRisk(String sessionId, {required bool autoApprove}) {
+    // 同上：关掉后生成中的「完全权限」小 chip 也一起隐藏。
+    if (!ref.watch(sessionPillVisibleProvider)) return null;
     if (autoApprove) {
       return StripRiskChip.autoApprove(
         context,

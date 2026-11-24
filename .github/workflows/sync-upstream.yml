@@ -96,6 +96,11 @@ jobs:
             app/lib/state/phone_state.dart \
             app/lib/ui/chat/chat_screen.dart \
             app/lib/ui/chat/dock/chat_dock.dart \
+            app/lib/ui/chat/dock/root_pill.dart \
+            app/lib/ui/features/permission_page.dart \
+            app/lib/state/chat_pills_state.dart \
+            app/lib/state/session_pill_state.dart \
+            app/lib/ui/phone/shell_permissions_page.dart \
             app/lib/ui/plugins/native/composer_capsules.dart \
             app/lib/ui/plugins/plugin_detail_sheet.dart \
             app/lib/ui/plugins/plugin_inventory_page.dart \

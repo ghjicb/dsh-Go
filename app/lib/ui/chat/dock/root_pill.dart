@@ -9,9 +9,9 @@ import '../../phone/shell_permissions_page.dart';
 import '../../theme/theme.dart';
 import 'dock_pill.dart';
 
-/// 「▣ 启用终端                  点击设置」
-/// 「▣ 终端 · 进阶               点击设置」
-/// 「▣ 终端 · 高危               点击设置」
+/// 「▣ 启用终端」
+/// 「▣ 终端 · 进阶」
+/// 「▣ 终端 · 高危」
 class RootPill extends ConsumerWidget {
   const RootPill({super.key, this.compact = false});
 
@@ -63,7 +63,6 @@ class RootPill extends ConsumerWidget {
         child: DockRow(
           leading: DockGlyph.icon(icon, color: color),
           content: Text(label, style: DockText.title(context, color: color)),
-          accessory: Text('点击设置', style: DockText.detail(context)),
         ),
       ),
     );

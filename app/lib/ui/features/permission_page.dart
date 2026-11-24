@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../l10n/l10n.dart';
 import '../../runtime/runtime_state.dart';
@@ -22,6 +23,7 @@ import '../../runtime/runtime_bridge.dart';
 import '../../state/engine_control.dart';
 import '../../state/hosts_state.dart';
 import '../../state/phone_state.dart';
+import '../../state/session_pill_state.dart';
 import '../common/ask_ai.dart';
 import '../common/list_page_row.dart';
 import '../common/risk_notice.dart';
@@ -77,6 +79,12 @@ class PermissionPage extends ConsumerStatefulWidget {
 
 class _PermissionPageState extends ConsumerState<PermissionPage> {
   bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSessionPillVisible(ref);
+  }
 
   void _toast(String text) => ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(text)));
 
@@ -205,6 +213,19 @@ class _PermissionPageState extends ConsumerState<PermissionPage> {
           spot: Spots.permissionPhoneConfirm,
           value: confirm?.label,
           onTap: () => unawaited(openSpot(context, Spots.phoneConfirm)),
+        ),
+        // 关掉后聊天框旁边不再显示「完全权限」胶囊。与终端胶囊开关完全独立。
+        ListPageRow(
+          title: '显示会话权限胶囊',
+          subtitle: '关掉后聊天框不再显示完全权限胶囊',
+          trailing: Switch.adaptive(
+            value: ref.watch(sessionPillVisibleProvider),
+            onChanged: (v) {
+              ref.read(sessionPillVisibleProvider.notifier).set(v);
+              unawaited(SharedPreferences.getInstance()
+                  .then((p) => p.setBool(kPrefSessionPill, v)));
+            },
+          ),
         ),
       ],
     );
