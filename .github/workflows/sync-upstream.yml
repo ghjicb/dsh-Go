@@ -207,6 +207,6 @@ jobs:
             --title "上游动过我们改的文件：$(date -u +%F)" \
             --body "这次同步上游改到了下面这些文件，按规则保留了我们的版本，上游的改动没有自动进来，需要的话人工合并：
 
-${{ steps.merge.outputs.TOUCHED }}
+          ${{ steps.merge.outputs.TOUCHED }}
 
-run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
