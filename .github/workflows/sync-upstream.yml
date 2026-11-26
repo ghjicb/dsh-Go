@@ -113,10 +113,19 @@ jobs:
           # 冲突也不再 abort：按名单逐个决定留谁
           git merge --no-ff --no-commit "${{ steps.check.outputs.ref }}" || true
 
-          # 1) 我们的文件 + .github 全部用我们的
-          for f in $OURS .github; do
-            git checkout HEAD -- "$f" 2>/dev/null || true
+          # 1) 名单里的文件：只有真冲突才保留我们的版本；
+          #    没冲突的让 git 的三方合并结果留着 —— 上游的改进能进来，我们的改动也不会丢。
+          #    （旧做法是整份 checkout HEAD，上游改这些文件就永远合不进来，
+          #     迟早被上游完全弃用，v1.4.0 的构建失败就是这么来的）
+          CONFLICTS=$(git diff --name-only --diff-filter=U)
+          for f in $OURS; do
+            if printf '%s\n' "$CONFLICTS" | grep -qxF "$f"; then
+              echo "keep ours (conflict): $f"
+              git checkout HEAD -- "$f" 2>/dev/null || true
+            fi
           done
+          # .github 一律用我们的（GITHUB_TOKEN 无 workflows 权限，不能带上游新增的 workflow）
+          git checkout HEAD -- .github 2>/dev/null || true
           # 1b) 上游新加的 .github 文件（HEAD 里没有的）必须删掉：
           #     GITHUB_TOKEN（GitHub App）没有 workflows 权限，带新 workflow 文件 push 会被拒。
           git ls-tree -r --name-only HEAD -- .github > /tmp/ours_gh.txt
